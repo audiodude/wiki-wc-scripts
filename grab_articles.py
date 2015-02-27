@@ -19,10 +19,12 @@ def read_xml(line_q, text_q):
   while True:
     parser.feed(line_q.get())
     for _, elem in parser.read_events():
-      text = elem.find('%srevision/%stext' % (NS_EXPORT, NS_EXPORT))
-      if text.text:
-        text_q.put(
-          lxml.etree.tostring(text, encoding='utf-8', xml_declaration=False))
+      title = elem.find('%stitle' % NS_EXPORT)
+      if not title.text.startswith('Wikipedia:'):
+        text = elem.find('%srevision/%stext' % (NS_EXPORT, NS_EXPORT))
+        if text.text:
+          text_q.put(
+            lxml.etree.tostring(text, encoding='utf-8', xml_declaration=False))
       elem.clear()
 
 def write_lines(text_q):
